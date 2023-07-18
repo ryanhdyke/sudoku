@@ -1,0 +1,70 @@
+add number pad on the side to use instead of keyboard
+add buttons to switch the input type (main, center, etc)
+add ability to hold down CTRL so input is of type center
+    hold down shift so input is of type corner
+add coloring tiles option
+make it so double click selects all similar tiles (by same main digit or color)
+remove certain inputs when you win
+    also make it so you need to exit out of the win box (maybe?)
+add a mode to create a board (place starting digits, etc.)
+
+
+
+BUG: fix when clicking on number pad, it deselects all tiles
+
+
+
+
+
+
+
+
+
+fix moving around with arrow keys to select (make it not be random and weird when multiple tiles are selected)
+    when holding down ctrl, selects more tiles, with no ctrl, it just moves the selected tile over
+    maybe add a global boolean variable if multiple tiles are selected at the same time
+    maybe if multiple tiles are selected, moving around clears all of them and only adds the one from the new movement
+        or have something to track the last selected tile and when multiple are selected and ctrl is held down, it selects from there
+
+    have a global variable in board that tracks the last tile selected (null if no tile is selected),
+    then moving when the ctrl key is down will move from there, selecting the new tiles and keeping the ones you go over selected,
+    regardless of the number of tiles selected.
+    without ctrl held down, it will just clear the entire board and move in the chosen direction
+
+
+all movement/clicking on tiles cases
+
+---------- clicking new cells ----------
+all variables: single or multiple cells, holding ctrl or not, clicking selected tile vs non selected
+
+single cell is selected and I click on it - it should unselect regardless of CTRL down or not
+    works
+any amount of cells are selected and I click outside of the grid - all cells should deselect
+    works
+any amount of cells are selected and I click on another cell without holding down CTRL - all the cells are deselected and the new one is selected
+    works
+any amount of cells are selected and I click on another cell while holding down CTRL - all the cells are still selected and the new one is also selected
+    works
+multiple cells are selected and I click on one of them without holding down CTRL - all cells except for the one I clicked on are deselected
+    does not work. all cells are now deselected
+multiple cells are selected and I click on one of them while holding down CTRL - all cells stay selected except for the one I clicked, which is deselected
+    works
+
+multiple cells are selected and I drag across one or more of them while holding down CTRL - all cells stay selected except for the ones I drag over, which is deselected
+    does not work at all
+
+
+BUG: if a tile is selected (any amount) and I drag to another tile without holding CTRL, it deselects without selecting more 
+
+----------Cases for dragged--------------------------------------
+nothing selected, drag will select all of the tiles dragged over
+if clicking on a selected tile (any amount) and holding down CTRL, dragging will deselect all tiles dragged over
+if clicking on a selected tile (any amount) without holding down CTRL, deselects all tiles except the one you clicked on and selects all
+    tiles that are dragged over
+
+---------- arrow key movement ----------
+single cell is selected and I use an arrow key to move without holding down CTRL - the cell is deselected and the cell i move to is selected
+single cell is selected and I use an arrow key to move while holding down CTRL - the cell is still selected and the cell i move to is selected
+
+might want to start over for mouseClicked and mouseDragged. have a variable counting the number of tiles selected
+and have cases to handle every type of scenario
