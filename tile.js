@@ -1,12 +1,15 @@
 class Tile {
-    constructor(mainNum, cornerNums, centerNums, x, y) {
+    constructor(mainNum, x, y, isDefault) {
         this.mainNum = mainNum
-        this.cornerNums = cornerNums
-        this.centerNums = centerNums
         this.column = x
         this.row = y
+        this.isDefault = isDefault
+
+        this.cornerNums = []
+        this.centerNums = []
         this.isConflicting = false
         this.isSelected = false
+        
         if (x <= 3 && y <= 3) {
             this.box = 1
         }
@@ -127,14 +130,5 @@ class Tile {
 
         //the + 10 is to get it a little bit out of the corner
         text(centerNumString, (this.column - 1) * tileSize + tileSize / 2, (this.row - 1) * tileSize + tileSize / 2)
-    }
-
-    // highlightTile() {        
-    //     // selectedX = this.column
-    //     // selectedY = this.row
-    //     if (this.isSelected) {
-
-    //     }
-    // }
-    
+    }    
 }

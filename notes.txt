@@ -1,18 +1,21 @@
-add number pad on the side to use instead of keyboard
-add buttons to switch the input type (main, center, etc)
-add ability to hold down CTRL so input is of type center
-    hold down shift so input is of type corner
-add coloring tiles option
-make it so double click selects all similar tiles (by same main digit or color)
-remove certain inputs when you win
-    also make it so you need to exit out of the win box (maybe?)
-add a mode to create a board (place starting digits, etc.)
+Where I left off: 
 
+Major additions: add coloring tiles option
+                 have a couple preset boards to choose from
+                 add undo and redo buttons
+                 have a mode to create a new puzzle
 
+Small additions: make it so double click selects all similar tiles (by same main digit or color)
+                 improve win box and end pop up
+                 come up with a better way to detect out of bounds click for the number pad
+                    shouldnt be by pixels
+                 have a more dynamic and responsive page (especially numberpad)
+                 improve the formatting for corner and center numbers 
+                 have a better way to show the mode
 
-BUG: fix when clicking on number pad, it deselects all tiles
-
-
+Bugs: holding down mouse outside of the grid highlights the buttons and top text
+      shift or ctrl and delete deletes all and not just corner or center marks
+      some rows and columns have pencil marks as blue and some have it as black
 
 
 

@@ -1,16 +1,27 @@
 class Board {
-    constructor() {
+  //pass in an array of arrays with each interior one containing [mainNum, x, y] for preset numbers
+    constructor(defaultNums) {
+      // if (defaultNums === null)
       this.tiles = [];
-      // this.numbers.push(new Number(5, 6, 3));
       for (let i = 1; i <= 9; i++) {
         for (let j = 1; j <= 9; j++) {
-          this.tiles.push(new Tile(0, [], [], j, i))
+          let defaultTile = false
+          for (let c = 0; c < defaultNums.length; c++) {
+            if (defaultNums[c][1] === j && defaultNums[c][2] === i) {
+              print("adding a default num")
+              this.tiles.push(new Tile(defaultNums[c][0], j, i, true))
+              defaultTile = true
+              break
+            }
+          }
+          if (!defaultTile) {
+            this.tiles.push(new Tile(0, j, i, false))
+          }
         }
       }
     }
   
-    showTiles() {
-      // show main numbers
+    showTiles() {      
       for (var i = 0; i < this.tiles.length; i++) {
 
         //show main numbers
@@ -19,8 +30,12 @@ class Board {
           if (this.tiles[i].isConflicting) {
             fill(255, 0, 0)
           }
-          else {
+          else if (this.tiles[i].isDefault) {
             fill(0)
+          }
+          else {
+            fill(0, 0, 255)
+            stroke(0, 31, 177)
           }
           this.tiles[i].displayMainNumber()
         }
@@ -32,7 +47,8 @@ class Board {
           this.tiles[i].displayCenterNumbers()
         }        
       }
-
+      fill(0)
+      stroke(0)
     }
 
     // selectTile(x, y) {

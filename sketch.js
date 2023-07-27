@@ -1,6 +1,7 @@
 var tileSize = 75;
 var gameBoard;
 var currMode = "main" //["main", "corner", "center", "color"] //can have main, corner, center, color
+var holdingShift = false
 var lastSelectedTile = null;
 // var multipleTilesSelected = false;
 var startingDragX = -1;
@@ -15,12 +16,21 @@ function setup() {
   var y = ((windowHeight - height) / 2) + 20;
   cnv.position(x, y);
 
-  gameBoard = new Board();
+  //hard difficulty
+  let hardBoard = [[5, 5, 1], [4, 9, 1], [7, 2, 2], [6, 6, 2],
+                   [1, 2, 3], [3, 7, 3], [8, 3, 4], [4, 4, 4],
+                   [1, 5, 4], [6, 8, 4], [9, 3, 5], [5, 7, 5],
+                   [1, 3, 6], [2, 5, 6], [8, 6, 6], [7, 8, 6],
+                   [7, 5, 7], [1, 7, 7], [5, 9, 7], [2, 2, 8],
+                   [8, 4, 8], [1, 6, 8], [4, 5, 9], [9, 6, 9],
+                   [2, 8, 9]]
+
+  gameBoard = new Board(hardBoard);
 
   //add a keypad
   b1 = createButton('1')
   b1.position(825, 280)
-  b1.mousePressed(function() { keypadValue(1)})
+  b1.mousePressed(function() {numberInput(1)})
   b1.size(75, 75)
   b1.style('background-color: rgb(232, 85, 0)')
   b1.style('color', 'white')
@@ -30,7 +40,7 @@ function setup() {
 
   b2 = createButton('2')
   b2.position(902, 280)
-  b2.mousePressed(function() { keypadValue(2)})
+  b2.mousePressed(function() {numberInput(2)})
   b2.size(75, 75)
   b2.style('background-color: rgb(232, 85, 0)')
   b2.style('color', 'white')
@@ -40,7 +50,7 @@ function setup() {
 
   b3 = createButton('3')
   b3.position(979, 280)
-  b3.mousePressed(function() { keypadValue(3)})
+  b3.mousePressed(function() {numberInput(3)})
   b3.size(75, 75)
   b3.style('background-color: rgb(232, 85, 0)')
   b3.style('color', 'white')
@@ -51,7 +61,7 @@ function setup() {
 
   b4 = createButton('4')
   b4.position(825, 357)
-  b4.mousePressed(function() { keypadValue(4)})
+  b4.mousePressed(function() {numberInput(4)})
   b4.size(75, 75)
   b4.style('background-color: rgb(232, 85, 0)')
   b4.style('color', 'white')
@@ -61,7 +71,7 @@ function setup() {
 
   b5 = createButton('5')
   b5.position(902, 357)
-  b5.mousePressed(function() { keypadValue(5)})
+  b5.mousePressed(function() {numberInput(5)})
   b5.size(75, 75)
   b5.style('background-color: rgb(232, 85, 0)')
   b5.style('color', 'white')
@@ -71,7 +81,7 @@ function setup() {
 
   b6 = createButton('6')
   b6.position(979, 357)
-  b6.mousePressed(function() { keypadValue(6)})
+  b6.mousePressed(function() {numberInput(6)})
   b6.size(75, 75)
   b6.style('background-color: rgb(232, 85, 0)')
   b6.style('color', 'white')
@@ -82,7 +92,7 @@ function setup() {
 
   b7 = createButton('7')
   b7.position(825, 434)
-  b7.mousePressed(function() { keypadValue(7)})
+  b7.mousePressed(function() {numberInput(7)})
   b7.size(75, 75)
   b7.style('background-color: rgb(232, 85, 0)')
   b7.style('color', 'white')
@@ -92,7 +102,7 @@ function setup() {
 
   b8 = createButton('8')
   b8.position(902, 434)
-  b8.mousePressed(function() { keypadValue(8)})
+  b8.mousePressed(function() {numberInput(8)})
   b8.size(75, 75)
   b8.style('background-color: rgb(232, 85, 0)')
   b8.style('color', 'white')
@@ -102,14 +112,44 @@ function setup() {
 
   b9 = createButton('9')
   b9.position(979, 434)
-  b9.mousePressed(function() { keypadValue(9)})
+  b9.mousePressed(function() {numberInput(9)})
   b9.size(75, 75)
   b9.style('background-color: rgb(232, 85, 0)')
   b9.style('color', 'white')
   // b1.style('border', 'none')
   b9.style('font-size', '32px')
   b9.style('cursor', 'pointer')
+
+  deleteButton = createButton('Del')
+  deleteButton.position(902, 511)
+  deleteButton.mousePressed(deleteNumber)
+  deleteButton.size(152, 75)
+  deleteButton.style('background-color: rgb(232, 85, 0)')
+  deleteButton.style('color', 'white')
+  // b1.style('border', 'none')
+  deleteButton.style('font-size', '32px')
+  deleteButton.style('cursor', 'pointer')
   
+
+
+
+
+
+  // document.addEventListener('contextmenu', event => event.preventDefault());
+  const disabledKeys = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // keys that will be disabled
+  const showAlert = e => {
+    e.preventDefault(); // preventing its default behaviour
+    return;
+  }
+  document.addEventListener("contextmenu", e => {
+    showAlert(e); // calling showAlert() function on mouse right click
+  });
+  document.addEventListener("keydown", e => {
+    // calling showAlert() function, if the pressed key matched to disabled keys
+    if(e.ctrlKey && disabledKeys.includes(int(e.key))) {
+      showAlert(e);
+    }
+  });
 }
 
 function draw() {
@@ -141,10 +181,36 @@ function draw() {
   }
 
   // if (keyIsDown(CONTROL)) {
+  //   print("center mode")
   //   currMode = "center"
   // }
   // if (keyIsDown(SHIFT)) {
-  //   currMode = "corner"
+  //   print("corner mode")
+  //   // currMode = "corner"
+  //   holdingShift = true
+  // }
+  // else {
+  //   holdingShift = false
+  // }
+
+  // document.onkeydown = function(e) {
+  //   print("key pressed down")
+  //   if (e.ctrlKey) {
+  //     currMode = "center"
+  //   }
+  //   if (e.shiftKey) {
+  //     currMode = "corner"
+  //   }
+  // }
+
+  // // let tempMode = currMode
+  // document.onkeyup = function(e) {
+  //   if (e.key == "Control") {
+  //     currMode = "main"
+  //   }
+  //   if (e.key == "Shift") {
+  //     currMode = "main"
+  //   }
   // }
 
 }
@@ -186,7 +252,7 @@ function showGrid() {
 
 function mousePressed() {
   //clicked number pad (dont want to do anything here)
-  if (mouseX >= 725 && mouseX <= 953 && mouseY >= 220 && mouseY <= 449) {
+  if (mouseX >= 725 && mouseX <= 953 && mouseY >= 220 && mouseY <= 526) {
     return
   }
   
@@ -270,7 +336,6 @@ function mousePressed() {
 }
 
 function mouseDragged() {
-  print("mouse dragged")
 
   var x = ceil(mouseX / tileSize)
   var y = ceil(mouseY / tileSize)
@@ -307,48 +372,54 @@ function mouseDragged() {
 }
 
 // adding numbers
-function keyTyped() {
-  if (key <= 9 && key >= 1) {
-    
-    if (currMode == "main") {
-      for (let i = 0; i < 81; i++) {
-        if (gameBoard.tiles[i].isSelected) {
-          gameBoard.tiles[i].mainNum = int(key)
-        }
-      }
-    }
-    else if (currMode == "corner") {
-      for (let i = 0; i < 81; i++) {
-        if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].cornerNums.includes(int(key))) {
-          // also put it in order 
-          gameBoard.tiles[i].cornerNums.push(int(key))
-        }
-        else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].cornerNums.includes(int(key))) {
-          // also put it in order 
-          let index = gameBoard.tiles[i].cornerNums.indexOf(int(key))
-          gameBoard.tiles[i].cornerNums.splice(index, 1)
-        }
-      }
-    }
-    else if (currMode == "center") {
-      for (let i = 0; i < 81; i++) {
-        if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].centerNums.includes(int(key))) {
-          gameBoard.tiles[i].centerNums.push(int(key))
-        }
-        else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].centerNums.includes(int(key))) {
-          // also put it in order 
-          let index = gameBoard.tiles[i].centerNums.indexOf(int(key))
-          gameBoard.tiles[i].centerNums.splice(index, 1)
-        }
-      }
-    }
+// function keyTyped() {
+//   print("Key typed: ", key)
+//   if ((int(key) <= 9 && int(key) >= 1) || key === "!") {
+//     print("Passing in a number")
+//     numberInput(int(key))
+//   }
 
-  }
-
-}
+// }
 
 //handles backspace and arrow key movement
 function keyPressed() {
+  //translating from shifted numbers to their actual number
+  switch(key) {
+    case "!":
+      key = 1
+      break;
+    case "@":
+      key = 2
+      break;
+    case "#":
+      key = 3
+      break;
+    case "$":
+      key = 4
+      break;
+    case "%":
+      key = 5
+      break;
+    case "^":
+      key = 6
+      break;
+    case "&":
+      key = 7
+      break;
+    case "*":
+      key = 8
+      break;
+    case "(":
+      key = 9
+      break;
+    default:
+      // code block
+  }
+
+  if ((int(key) <= 9 && int(key) >= 1)) {
+    numberInput(int(key))
+  }
+
   if (key == ' ') {
     if (currMode == "main") {
       currMode = "corner"
@@ -362,19 +433,11 @@ function keyPressed() {
     else if (currMode == "color") {
       currMode = "main"
     }
-    print("Mode: ", currMode)
     return
   }
 
-  if (keyCode === BACKSPACE) {
-    for (let i = 0; i < 81; i++) {
-      if (gameBoard.tiles[i].isSelected) {
-        let currTile = gameBoard.tiles[i]
-        currTile.mainNum = 0
-        currTile.cornerNums.length = 0
-        currTile.centerNums.length = 0
-      }
-    }
+  if (keyCode === BACKSPACE || keyCode === DELETE) {
+    deleteNumber()
     return
   }
   
@@ -496,44 +559,123 @@ function keyPressed() {
   }
 }
 
-// function keyReleased() {
-//   if (keyCode === SHIFT || keyCode === CONTROL) {
-//     currMode = "main"
+// function keypadValue(value) {
+//   // value = 1
+//   if (currMode == "main") {
+//     for (let i = 0; i < 81; i++) {
+//       if (gameBoard.tiles[i].isSelected) {
+//         gameBoard.tiles[i].mainNum = value
+//       }
+//     }
+//   }
+//   else if (currMode == "corner") {
+//     for (let i = 0; i < 81; i++) {
+//       if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].cornerNums.includes(value)) {
+//         // also put it in order 
+//         gameBoard.tiles[i].cornerNums.push(value)
+//       }
+//       else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].cornerNums.includes(value)) {
+//         // also put it in order 
+//         let index = gameBoard.tiles[i].cornerNums.indexOf(value)
+//         gameBoard.tiles[i].cornerNums.splice(index, 1)
+//       }
+//     }
+//   }
+//   else if (currMode == "center") {
+//     for (let i = 0; i < 81; i++) {
+//       if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].centerNums.includes(value)) {
+//         gameBoard.tiles[i].centerNums.push(value)
+//       }
+//       else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].centerNums.includes(value)) {
+//         // also put it in order 
+//         let index = gameBoard.tiles[i].centerNums.indexOf(value)
+//         gameBoard.tiles[i].centerNums.splice(index, 1)
+//       }
+//     }
 //   }
 // }
 
-function keypadValue(value) {
-  // value = 1
-  if (currMode == "main") {
+function numberInput(num) {
+  if (currMode == "main" && (!keyIsDown(SHIFT) && !keyIsDown(CONTROL))) {
     for (let i = 0; i < 81; i++) {
+      if (gameBoard.tiles[i].isDefault) {
+        continue
+      }
       if (gameBoard.tiles[i].isSelected) {
-        gameBoard.tiles[i].mainNum = value
+        //it has a main num that is the same as the inputed number
+        if (gameBoard.tiles[i].mainNum === num) {
+          //want to delete the main num and show the center and corner numbers again
+          gameBoard.tiles[i].mainNum = 0
+        }
+        //any other input other that the same main number, should override and set the mainnum to the new input num
+        else {
+          gameBoard.tiles[i].mainNum = num
+        }
       }
     }
   }
-  else if (currMode == "corner") {
+  else if ((currMode == "corner" || keyIsDown(SHIFT)) && !keyIsDown(CONTROL)) {
     for (let i = 0; i < 81; i++) {
-      if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].cornerNums.includes(value)) {
-        // also put it in order 
-        gameBoard.tiles[i].cornerNums.push(value)
+      if (gameBoard.tiles[i].isDefault) {
+        continue
       }
-      else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].cornerNums.includes(value)) {
+      if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].cornerNums.includes(num)) {
         // also put it in order 
-        let index = gameBoard.tiles[i].cornerNums.indexOf(value)
+        gameBoard.tiles[i].cornerNums.push(num)
+      }
+      else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].cornerNums.includes(num)) {
+        // also put it in order 
+        let index = gameBoard.tiles[i].cornerNums.indexOf(num)
         gameBoard.tiles[i].cornerNums.splice(index, 1)
       }
     }
   }
-  else if (currMode == "center") {
+  else if (currMode == "center" || keyIsDown(CONTROL)) {
     for (let i = 0; i < 81; i++) {
-      if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].centerNums.includes(value)) {
-        gameBoard.tiles[i].centerNums.push(value)
+      if (gameBoard.tiles[i].isDefault) {
+        continue
       }
-      else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].centerNums.includes(value)) {
+      if (gameBoard.tiles[i].isSelected && !gameBoard.tiles[i].centerNums.includes(num)) {
+        gameBoard.tiles[i].centerNums.push(num)
+      }
+      else if (gameBoard.tiles[i].isSelected && gameBoard.tiles[i].centerNums.includes(num)) {
         // also put it in order 
-        let index = gameBoard.tiles[i].centerNums.indexOf(value)
+        let index = gameBoard.tiles[i].centerNums.indexOf(num)
         gameBoard.tiles[i].centerNums.splice(index, 1)
       }
+    }
+  }
+}
+
+function deleteNumber() {
+  for (let i = 0; i < 81; i++) {
+    if (gameBoard.tiles[i].isSelected) {
+      if (gameBoard.tiles[i].isDefault) {
+        continue
+      }
+      let currTile = gameBoard.tiles[i]
+
+      //it has a main number
+      if (currTile.mainNum !== 0) {
+        //just delete main number
+        currTile.mainNum = 0
+        continue
+      }
+
+      if (currMode == "main") {
+        //delete everything
+        currTile.mainNum = 0
+        currTile.cornerNums.length = 0
+        currTile.centerNums.length = 0
+      }
+      else if (currMode == "corner") {
+        //delete all corner markings
+        currTile.cornerNums.length = 0
+      }
+      else if (currMode == "center") {
+        //delete all corner markings
+        currTile.centerNums.length = 0
+      }    
     }
   }
 }
