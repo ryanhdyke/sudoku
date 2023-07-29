@@ -8,7 +8,7 @@ class Board {
           let defaultTile = false
           for (let c = 0; c < defaultNums.length; c++) {
             if (defaultNums[c][1] === j && defaultNums[c][2] === i) {
-              print("adding a default num")
+              // print("adding a default num")
               this.tiles.push(new Tile(defaultNums[c][0], j, i, true))
               defaultTile = true
               break
@@ -35,12 +35,13 @@ class Board {
           }
           else {
             fill(0, 0, 255)
-            stroke(0, 31, 177)
+            stroke(0, 0, 255)
           }
           this.tiles[i].displayMainNumber()
         }
         else {
           // show corner numbers
+          fill(0, 0, 255)
           this.tiles[i].displayCornerNumbers()
 
           // show center numbers

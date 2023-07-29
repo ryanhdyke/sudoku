@@ -1,4 +1,4 @@
-Where I left off: 
+Where I left off: working on formatting the mode button
 
 Major additions: add coloring tiles option
                  have a couple preset boards to choose from
@@ -15,7 +15,6 @@ Small additions: make it so double click selects all similar tiles (by same main
 
 Bugs: holding down mouse outside of the grid highlights the buttons and top text
       shift or ctrl and delete deletes all and not just corner or center marks
-      some rows and columns have pencil marks as blue and some have it as black
 
 
 

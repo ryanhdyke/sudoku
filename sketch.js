@@ -8,6 +8,8 @@ var startingDragX = -1;
 var startingDragY = -1;
 var startingDragIsSelected = false;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var modeButton;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function setup() {
   var cnv = createCanvas(675, 675);
@@ -34,7 +36,6 @@ function setup() {
   b1.size(75, 75)
   b1.style('background-color: rgb(232, 85, 0)')
   b1.style('color', 'white')
-  // b1.style('border', 'none')
   b1.style('font-size', '32px')
   b1.style('cursor', 'pointer')
 
@@ -44,7 +45,6 @@ function setup() {
   b2.size(75, 75)
   b2.style('background-color: rgb(232, 85, 0)')
   b2.style('color', 'white')
-  // b2.style('border', 'none')
   b2.style('font-size', '32px')
   b2.style('cursor', 'pointer')
 
@@ -54,7 +54,6 @@ function setup() {
   b3.size(75, 75)
   b3.style('background-color: rgb(232, 85, 0)')
   b3.style('color', 'white')
-  // b1.style('border', 'none')
   b3.style('font-size', '32px')
   b3.style('cursor', 'pointer')
 
@@ -65,7 +64,6 @@ function setup() {
   b4.size(75, 75)
   b4.style('background-color: rgb(232, 85, 0)')
   b4.style('color', 'white')
-  // b1.style('border', 'none')
   b4.style('font-size', '32px')
   b4.style('cursor', 'pointer')
 
@@ -75,7 +73,6 @@ function setup() {
   b5.size(75, 75)
   b5.style('background-color: rgb(232, 85, 0)')
   b5.style('color', 'white')
-  // b2.style('border', 'none')
   b5.style('font-size', '32px')
   b5.style('cursor', 'pointer')
 
@@ -85,7 +82,6 @@ function setup() {
   b6.size(75, 75)
   b6.style('background-color: rgb(232, 85, 0)')
   b6.style('color', 'white')
-  // b1.style('border', 'none')
   b6.style('font-size', '32px')
   b6.style('cursor', 'pointer')
   
@@ -96,7 +92,6 @@ function setup() {
   b7.size(75, 75)
   b7.style('background-color: rgb(232, 85, 0)')
   b7.style('color', 'white')
-  // b1.style('border', 'none')
   b7.style('font-size', '32px')
   b7.style('cursor', 'pointer')
 
@@ -106,7 +101,6 @@ function setup() {
   b8.size(75, 75)
   b8.style('background-color: rgb(232, 85, 0)')
   b8.style('color', 'white')
-  // b2.style('border', 'none')
   b8.style('font-size', '32px')
   b8.style('cursor', 'pointer')
 
@@ -116,7 +110,6 @@ function setup() {
   b9.size(75, 75)
   b9.style('background-color: rgb(232, 85, 0)')
   b9.style('color', 'white')
-  // b1.style('border', 'none')
   b9.style('font-size', '32px')
   b9.style('cursor', 'pointer')
 
@@ -126,16 +119,20 @@ function setup() {
   deleteButton.size(152, 75)
   deleteButton.style('background-color: rgb(232, 85, 0)')
   deleteButton.style('color', 'white')
-  // b1.style('border', 'none')
   deleteButton.style('font-size', '32px')
   deleteButton.style('cursor', 'pointer')
+
+  modeButton = createButton("1")
+  modeButton.position(825, 511)
+  modeButton.mousePressed(changeMode)
+  modeButton.size(75, 75)
+  modeButton.style('background-color: rgb(232, 85, 0)')
+  modeButton.style('color', 'black')
+  // modeButton.style('stroke', '0')
+  modeButton.style('font-size', '32px')
+  modeButton.style('cursor', 'pointer')
   
 
-
-
-
-
-  // document.addEventListener('contextmenu', event => event.preventDefault());
   const disabledKeys = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // keys that will be disabled
   const showAlert = e => {
     e.preventDefault(); // preventing its default behaviour
@@ -162,14 +159,10 @@ function draw() {
   document.getElementById("whatMode").innerHTML = currMode
 
   if (gameBoard.checkGameWin()) {
-    // print("GAME WON")
-    // rectMode(CENTER)
     fill(255)
     stroke(0)
     strokeWeight(10)
-    // translate((width - 500) / 2, (height - 250) / 2)
     rect((width - 500) / 2, (height - 250) / 2, 500, 250, 50);
-    // rectMode(CORNER)
 
     fill(0)
     textAlign(CENTER, CENTER)
@@ -179,40 +172,6 @@ function draw() {
     
     text("You won!", width / 2, width / 2)
   }
-
-  // if (keyIsDown(CONTROL)) {
-  //   print("center mode")
-  //   currMode = "center"
-  // }
-  // if (keyIsDown(SHIFT)) {
-  //   print("corner mode")
-  //   // currMode = "corner"
-  //   holdingShift = true
-  // }
-  // else {
-  //   holdingShift = false
-  // }
-
-  // document.onkeydown = function(e) {
-  //   print("key pressed down")
-  //   if (e.ctrlKey) {
-  //     currMode = "center"
-  //   }
-  //   if (e.shiftKey) {
-  //     currMode = "corner"
-  //   }
-  // }
-
-  // // let tempMode = currMode
-  // document.onkeyup = function(e) {
-  //   if (e.key == "Control") {
-  //     currMode = "main"
-  //   }
-  //   if (e.key == "Shift") {
-  //     currMode = "main"
-  //   }
-  // }
-
 }
 
 function showGrid() {
@@ -421,18 +380,7 @@ function keyPressed() {
   }
 
   if (key == ' ') {
-    if (currMode == "main") {
-      currMode = "corner"
-    }
-    else if (currMode == "corner") {
-      currMode = "center"
-    }
-    else if (currMode == "center") {
-      currMode = "color"
-    }
-    else if (currMode == "color") {
-      currMode = "main"
-    }
+    changeMode()
     return
   }
 
@@ -662,22 +610,55 @@ function deleteNumber() {
         continue
       }
 
-      if (currMode == "main") {
+      if (currMode == "main" && !keyIsDown(SHIFT) && !keyIsDown(CONTROL)) {
         //delete everything
         currTile.mainNum = 0
         currTile.cornerNums.length = 0
         currTile.centerNums.length = 0
       }
-      else if (currMode == "corner") {
+      else if (currMode == "corner" || keyIsDown(SHIFT)) {
         //delete all corner markings
         currTile.cornerNums.length = 0
       }
-      else if (currMode == "center") {
+      else if (currMode == "center" || keyIsDown(CONTROL)) {
         //delete all corner markings
         currTile.centerNums.length = 0
       }    
     }
   }
+}
+
+function changeMode() {
+  let buttonText = ""
+  if (currMode == "main") {
+    currMode = "corner"
+    buttonText = "123"
+    modeButton.style("font-size", "16px")
+    modeButton.style("text-align", LEFT)
+    // modeButton.style("display", "inline-flex")
+    // modeButton.innerHTML.textAlign(LEFT, TOP)
+  }
+  else if (currMode == "corner") {
+    currMode = "center"
+    buttonText = "123"
+    modeButton.style("font-size", "16px")
+    modeButton.style("text-align", CENTER)
+    // modeButton.style("display", "flex")
+    // modeButton.style("justify-content", CENTER)
+  }
+  else if (currMode == "center") {
+    currMode = "color"
+    buttonText = "red"
+    modeButton.style("font-size", "32px")
+    modeButton.style("text-align", CENTER)
+  }
+  else if (currMode == "color") {
+    currMode = "main"
+    buttonText = "1"
+    modeButton.style("font-size", "32px")
+    modeButton.style("text-align", CENTER)
+  }
+  modeButton.html(buttonText)
 }
 
 
